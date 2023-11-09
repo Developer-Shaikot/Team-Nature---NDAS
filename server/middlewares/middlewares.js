@@ -3,7 +3,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
 const middlewares = [
-	cors({ credentials: true, origin: "http://localhost:3001" }),
+	cors({ credentials: true, origin: "https://ndas-39655.web.app" }),
 	cookieParser(),
 	express.static("public"),
 	express.json(),
