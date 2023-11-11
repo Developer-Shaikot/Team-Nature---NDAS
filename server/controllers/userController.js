@@ -89,65 +89,66 @@ exports.logoutUser = expressAsyncHandler(async (req, res) => {
 
 
 exports.isLoggedIn = expressAsyncHandler(async (req, res) => {
-	if (req.cookies && req.cookies.auth) {
-		return res.status(200).json({
-			status: true,
-			user: verifyToken(req.cookies.auth),
-		});
-	}
+  if (req.cookies && req.cookies.auth) {
+    return res.status(200).json({
+      status: true,
+      user: verifyToken(req.cookies.auth),
+    });
+  }
 
-	return res.status(200).json({
-		status: false,
-		user: null,
-	});
+  return res.status(200).json({
+    status: false,
+    user: null,
+  });
 });
 
 exports.getLoggedInUser = expressAsyncHandler(async (req, res) => {
-	const token = req.cookies.auth;
-	const user = verifyToken(token);
+  const token = req.cookies.auth;
+  const user = verifyToken(token);
 
-	if (user) {
-		const userInfo = await User.findById(user.id);
-		return res.status(200).json({
-			status: true,
-			user: userInfo,
-		});
-	}
+  if (user) {
+    const userInfo = await User.findById(user.id);
+    return res.status(200).json({
+      status: true,
+      user: userInfo,
+    });
+  }
 
-	res.status(200).json({
-		status: false,
-		user: null,
-	});
+  res.status(200).json({
+    status: false,
+    user: null,
+  });
 });
 
 exports.isTeacher = expressAsyncHandler(async (req, res) => {
-	const user = verifyToken(req.cookies?.auth);
+  const user = verifyToken(req.cookies?.auth);
 
-	if (user.user_type === "teacher") {
-		return res.status(200).json({
-			success: true,
-			message: "Current user is teacher",
-		});
-	}
-	res.status(200).json({
-		success: false,
-		message: "Current user is not teacher",
-	});
+  if (user) {
+    const userInfo = await User.findById(user.id);
+    return res.status(200).json({
+      status: true,
+      user: userInfo,
+    });
+  }
+
+  res.status(200).json({
+    status: false,
+    user: null,
+  });
+
+  if (user) {
+  	const userInfo = await User.findById(user.id);
+  	return res.status(200).json({
+  		status: true,
+  		user: userInfo,
+  	});
+  }
+
+  res.status(200).json({
+  	status: false,
+  	user: null,
+  });
 });
-
-  // if (user) {
-  // 	const userInfo = await User.findById(user.id);
-  // 	return res.status(200).json({
-  // 		status: true,
-  // 		user: userInfo,
-  // 	});
-  // }
-
-  // res.status(200).json({
-  // 	status: false,
-  // 	user: null,
-  // });
-
 
 exports.addAdmin = expressAsyncHandler(async (req, res) => {
   const { email, password } = req.body;
