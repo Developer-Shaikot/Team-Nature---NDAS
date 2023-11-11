@@ -11,7 +11,6 @@ import Uploads from "../pages/dashboard/Uploads";
 import AdminProtected from "./AdminProtected";
 import SuperAdmin from "./SuperAdminProtected";
 import Login from "../pages/login/Login";
-import Reg from "../pages/register/Reg";
 import SuperAdminUploads from "../pages/dashboard/SuperAdminUploads";
 import Wildfire from "../pages/trackDiaster/wildfire/Wildfire";
 import Earthquake from "../pages/trackDiaster/earthquake/Earthquake";
