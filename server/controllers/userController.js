@@ -27,44 +27,52 @@ exports.registerUser = expressAsyncHandler(async (req, res) => {
 });
 
 exports.loginUser = expressAsyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+	const { email, password } = req.body;
 
-  const user = await User.findOne({ email }).select(
-    "name email user_type +password"
-  );
+	const user = await User.findOne({ email }).select("name email user_type +password");
 
-  if (user) {
-    const isPswMatch = await bcrypt.compare(password, user.password);
+	if (user) {
+		const isPswMatch = await bcrypt.compare(password, user.password);
 
-    if (isPswMatch) {
-      const token = generateToken({
-        id: user._id,
-        email: user.email,
-        user_type: user.user_type,
-      });
+		if (isPswMatch) {
+			const token = generateToken({
+				id: user._id,
+				email: user.email,
+				user_type: user.user_type,
+			});
 
-      res.cookie("auth", token, {
-        httpOnly: true,
-      });
+			// res.cookie("userId", user._id);
+			res.cookie("userId", user._id, {
+				maxAge: 6 * 60 * 60 * 1000, // 6 hour
+				secure: process.env.NODE_ENV === "production" ? true : false,
+				sameSite: process.env.NODE_ENV === "production" ? "none" : false,
+			});
 
-      return res.status(200).json({
-        success: true,
-        message: "Login successful!",
-        token,
-      });
-    }
-    return res.status(401).json({
-      success: false,
-      message: "Wrong credentials!",
-    });
-  }
+			// set httpOnly auth cookie to browser
+			res.cookie("auth", token, {
+				maxAge: 26 * 60 * 60 * 1000, // 6 hour
+				secure: process.env.NODE_ENV === "production" ? true : false,
+				httpOnly: process.env.NODE_ENV === "production" ? true : false,
+				sameSite: process.env.NODE_ENV === "production" ? "none" : false,
+			});
 
-  res.status(401).json({
-    success: false,
-    message: "Wrong credentials!",
-  });
+			return res.status(200).json({
+				success: true,
+				message: "Login successful!",
+				token,
+			});
+		}
+		return res.status(401).json({
+			success: false,
+			message: "Wrong credentials!",
+		});
+	}
+
+	res.status(401).json({
+		success: false,
+		message: "Wrong credentials!",
+	});
 });
-
 exports.logoutUser = expressAsyncHandler(async (req, res) => {
   res.clearCookie("auth");
   res.status(200).json({
